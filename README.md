@@ -1,127 +1,198 @@
-# Guhya
+# **Guhya**
 
-Guhya is a fast, multithreaded scanner designed to discover exposed secrets, keys, tokens, and other sensitive data in web resources and local files. It combines efficient parallel fetching with a comprehensive set of PCRE2-based signatures to quickly surface high-value findings.
+**Guhya** is a fast, multithreaded secret discovery tool built to uncover exposed keys, tokens, credentials, and other sensitive data from web resources and local files. It combines high-performance parallel fetching with a rich set of PCRE2 signatures to surface high-value leaks quickly and reliably.
 
-**Quick summary:** Scans stdin content, local files, or URLs (queued via stdin), matches them against many built-in regex patterns (and optional custom patterns), and reports unique discoveries to stdout or an output file.
+> **In short:** feed Guhya URLs, files, or raw content → it scans using powerful regex signatures → deduplicates results → reports only real findings.
 
-**Features**
-- **Multithreaded scanning:** Configurable worker threads for high throughput.
-- **Content & URL modes:** Accepts raw content or a list of URLs / file paths via stdin.
-- **Comprehensive patterns:** Dozens of PCRE2 signatures for API keys, tokens, private keys, webhook URLs, cloud credentials, and more.
-- **Custom patterns:** Append your own regex with `-p`/`--pattern`.
-- **Flexible output:** Print to stdout and/or write to a file with `-o`/`--output`.
-- **User-Agent control:** Set a specific UA or enable randomized UAs for requests.
-- **Detailed reporting:** Optional detailed output including discovered line numbers.
 
-**Benefits**
-- **Fast discovery:** Parallel workers and libcurl-backed fetches speed up scanning large target lists.
-- **Low false-positive friction:** De-duplication of identical secrets across inputs.
-- **Extensible:** Add or extend regexes at runtime with the `--pattern` flag.
-- **Portable build:** Simple Makefile using `gcc`, `libcurl`, `libpcre2`, and pthreads.
 
-**Responsible use notice**
-Guhya is a security tool intended for authorized security testing, discovery, and remediation. Do not scan systems you do not own or have explicit written permission to test. Follow responsible disclosure practices for any secrets exposed.
+## ✨ Features
 
-**Requirements**
-- POSIX-compatible build tools (`gcc`, `make`) or an appropriate toolchain on Windows (MSYS2 / MinGW).
-- Libraries: `libcurl`, `libpcre2-8`, `pthread` (on Linux/macOS these are typically available via your package manager).
+* ⚡ **High-performance scanning**
+  Multithreaded workers for rapid analysis of large target sets.
 
-On Debian/Ubuntu you can install prerequisites with:
+* 🌐 **URL & file support**
+  Scan HTTP/HTTPS endpoints, local files, or raw piped content.
+
+* 🔍 **Rich detection engine**
+  Dozens of curated PCRE2 patterns for API keys, OAuth tokens, cloud credentials, private keys, webhooks, and more.
+
+* ➕ **Custom regex support**
+  Add your own detection logic at runtime with `-p / --pattern`.
+
+* 🧬 **De-duplication**
+  Identical secrets are reported once—no noisy repeats.
+
+* 🧭 **Detailed mode**
+  Optional line-number reporting for faster remediation.
+
+* 🎭 **User-Agent control**
+  Use a custom UA or rotate from a large built-in pool.
+
+* 🧱 **Portable & simple build**
+  Pure C with `libcurl`, `PCRE2`, and `pthread`.
+
+
+
+## 🚀 Why Guhya?
+
+* **Fast by design** — parallel I/O + lightweight core
+* **Low friction** — pipe-friendly, no config files needed
+* **Extensible** — add patterns without recompiling
+* **Practical** — built for real audits, not demos
+
+
+
+## ⚠️ Responsible Use
+
+Guhya is intended **only for authorized security testing** and internal audits.
+Do not scan systems you do not own or explicitly have permission to test.
+If you discover exposed secrets, follow responsible disclosure practices.
+
+
+
+## 📦 Requirements
+
+* Compiler: `gcc` (or compatible)
+* Libraries:
+
+  * `libcurl`
+  * `libpcre2-8`
+  * `pthread`
+
+### Debian / Ubuntu
 
 ```sh
 sudo apt update
 sudo apt install build-essential libcurl4-openssl-dev libpcre2-dev make
 ```
 
-On macOS (with Homebrew):
+### macOS (Homebrew)
 
 ```sh
 brew install curl pcre2
 ```
 
-On Windows, use MSYS2 or a compatible MinGW environment and install the corresponding `curl` and `pcre2` packages.
+### Windows
 
-**Build**
-The repository contains a simple Makefile. From the project root run:
+Use **MSYS2** or **MinGW** and install the corresponding `curl` and `pcre2` packages.
+
+
+
+## 🔧 Build
 
 ```sh
 make
 ```
 
-This produces the `guhya` binary. The Makefile compiles `src/main.c`, `src/scanner.c`, and `src/network.c` and links against `-lcurl -lpcre2-8 -lpthread`.
+This produces the `guhya` binary.
 
-**Usage**
-Guhya reads either raw content or newline-delimited targets from `stdin`. Targets can be URLs (http/https) or local file paths.
+Linking:
 
-Basic usage:
-
-```sh
-# Scan a list of URLs in urls.txt
-cat urls.txt | ./guhya -t 50 -o findings.txt
-
-# Scan a single file's content
-./guhya < somefile.txt
-
-# Scan a single URL
-echo "https://example.com" | ./guhya -d
+```
+-lcurl -lpcre2-8 -lpthread
 ```
 
-Common flags:
-- **-a, --user-agent**: Set a custom User-Agent string.
-- **-r, --random-agent**: Enable random selection from bundled User-Agents.
-- **-c, --cookie**: Send a cookie header with requests.
-- **-d, --detail**: Enable detailed output (includes matched line numbers and pattern names).
-- **-t, --threads**: Number of worker threads (default: 50).
-- **-p, --pattern**: Add an extra PCRE2 regex to run alongside built-in patterns.
-- **-o, --output**: Write findings to the specified file.
-- **-l, --label**: Set the input label used when scanning content from stdin (default: "stdin").
-- **-s, --silent**: Suppress the banner and informational logs.
-- **-h, --help**: Show help text.
 
-Examples:
+
+## 🧪 Usage
+
+Guhya reads input from **stdin**.
+Each line can be:
+
+* a URL (`http://` / `https://`)
+* a local file path
+* or raw content
+
+### Basic Examples
 
 ```sh
-# Add a custom regex and write to file
+cat urls.txt | guhya -t 50
+```
+
+```sh
+guhya < config.json
+```
+
+```sh
+echo "https://example.com" | guhya -d
+```
+
+
+
+## 🧰 Common Flags
+
+| Flag                 | Description                  |
+| -- | - |
+| `-a, --user-agent`   | Custom User-Agent            |
+| `-r, --random-agent` | Rotate random User-Agents    |
+| `-c, --cookie`       | Send Cookie header           |
+| `-t, --threads`      | Worker threads (default: 50) |
+| `-d, --detail`       | Show line numbers            |
+| `-p, --pattern`      | Add custom regex             |
+| `-o, --output`       | Write results to file        |
+| `-l, --label`        | Label stdin input            |
+| `-s, --silent`       | Suppress banner              |
+| `-h, --help`         | Show help                    |
+
+## 🧾 Advanced Examples
+
+```sh
 cat urls.txt | ./guhya -p "password\s*[:=]\s*['\"][^'\"]{8,}['\"]" -o secrets.out
+```
+```sh
+cat urls.txt | ./guhya -t 100 -a "MyScanner/1.0"
+```
 
-# Use a specific User-Agent and 100 threads
-cat urls.txt | ./guhya -a "MyScanner/1.0" -t 100
-
-# Scan raw content piped from a tool
+```sh
 git show HEAD:config.json | ./guhya -d -l config.json
 ```
 
-**How detection works (brief)**
-- Built-in patterns are compiled using PCRE2 with JIT enabled for performance.
-- The scanner de-duplicates identical secrets using an in-memory list to avoid repeated reporting.
-- When given a URL, `libcurl` fetches contents with follow-location and a configurable timeout; local files are read directly.
 
-**Extending & Custom Patterns**
-You can append one additional pattern at runtime using the `-p` flag. For more advanced use (multiple custom rules), consider modifying `src/scanner.c` to include your patterns in the `patterns[]` table and rebuild.
 
-**Development notes**
-- Source files: [src/main.c](src/main.c), [src/network.c](src/network.c), [src/scanner.c](src/scanner.c)
-- Header: [include/guhya.h](include/guhya.h)
-- Build: [Makefile](Makefile)
+## 🔬 How Detection Works
 
-**Testing**
-Quick manual test ideas:
+* Patterns are compiled using **PCRE2 (JIT enabled)** for speed
+* URLs are fetched via **libcurl** with redirects enabled
+* Local files are scanned directly
+* All matches are **deduplicated in memory**
+* Output is streamed immediately—no waiting for completion
+
+
+
+## 🧩 Extending Guhya
+
+* Use `-p` to add a single runtime pattern
+* For permanent rules, add patterns to `patterns[]` and rebuild
+
+## 🧪 Quick Tests
 
 ```sh
-echo "AKIAEXAMPLEKEY12345678" | ./guhya -d
-echo "username: password1234" | ./guhya -p "password\s*[:=]\s*[^\s]+" -d
+echo "AKIAEXAMPLEKEY12345678" | ./guhya
+echo "password: supersecret123" | ./guhya -p "password\s*[:=]\s*[^\s]+"
 ```
 
-**Contributing**
-- Fork, implement fixes or patterns, and open a PR. Include tests or example inputs if adding patterns.
-- When adding new patterns, ensure they are reasonably specific to limit false positives.
 
-**License**
-No license is included in this repository. If you intend to publish or share this project, add a `LICENSE` file (for example, MIT) to make the terms explicit.
 
-**Contact & Support**
-Open issues on the repository for bug reports, feature requests, or to discuss pattern improvements.
+## 🤝 Contributing
 
-**Acknowledgements**
-Built with `libcurl` and `PCRE2` for efficient network fetches and regex scanning.
+* PRs welcome for:
 
+  * New patterns
+  * Performance improvements
+  * Bug fixes
+* Keep regexes **specific** to reduce false positives
+
+
+## 📄 License
+
+This project is licensed under the **MIT License**.
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of this software, provided that the original copyright notice and license text are included.
+
+See the [LICENSE](LICENSE) file for full details.
+
+
+## 🙏 Acknowledgements
+
+Built with **libcurl** and **PCRE2** — fast, reliable, battle-tested.
