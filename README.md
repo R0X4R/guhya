@@ -122,7 +122,7 @@ echo "https://example.com" | guhya -d
 
 ## 🧰 Common Flags
 
-```css
+```js
 Guhya — A fast, multithreaded scanner that uncovers hidden secrets, keys, and tokens from web resources
 Usage: guhya [flags]
 
