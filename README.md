@@ -122,18 +122,22 @@ echo "https://example.com" | guhya -d
 
 ## 🧰 Common Flags
 
-| Flag                 | Description                  |
-| -- | - |
-| `-a, --user-agent`   | Custom User-Agent            |
-| `-r, --random-agent` | Rotate random User-Agents    |
-| `-c, --cookie`       | Send Cookie header           |
-| `-t, --threads`      | Worker threads (default: 50) |
-| `-d, --detail`       | Show line numbers            |
-| `-p, --pattern`      | Add custom regex             |
-| `-o, --output`       | Write results to file        |
-| `-l, --label`        | Label stdin input            |
-| `-s, --silent`       | Suppress banner              |
-| `-h, --help`         | Show help                    |
+```css
+Guhya — A fast, multithreaded scanner that uncovers hidden secrets, keys, and tokens from web resources
+Usage: guhya [flags]
+
+FLAGS:
+  -a, --user-agent      User-Agent string
+  -c, --cookie          Cookie header to send
+  -d, --detail          Detailed output (shows matching line numbers)
+  -h, --help            Show this help
+  -l, --label           Label to identify input source in output
+  -o, --output          Output file to write results to
+  -p, --pattern         Extra regex pattern to append
+  -r, --random-agent    Enable random User-Agent to use
+  -s, --silent          Silent (no banner)
+  -t, --threads         Number of worker threads (default 50)
+```
 
 ## 🧾 Advanced Examples
 
