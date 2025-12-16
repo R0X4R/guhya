@@ -257,6 +257,7 @@ int main(int argc, char **argv)
             printf("  -c, --cookie\t\tCookie header to send\n");
             printf("  -d, --detail\t\tDetailed output (shows matching line numbers)\n");
             printf("  -h, --help\t\tShow this help\n");
+            printf("  -l, --label\t\tLabel to identify input source in output\n");
             printf("  -o, --output\t\tOutput file to write results to\n");
             printf("  -p, --pattern\t\tExtra regex pattern to append\n");
             printf("  -r, --random-agent\tEnable random User-Agent to use\n");
