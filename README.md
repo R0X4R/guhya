@@ -138,14 +138,14 @@ echo "https://example.com" | guhya -d
 ## 🧾 Advanced Examples
 
 ```sh
-cat urls.txt | ./guhya -p "password\s*[:=]\s*['\"][^'\"]{8,}['\"]" -o secrets.out
+cat urls.txt | guhya -p "password\s*[:=]\s*['\"][^'\"]{8,}['\"]" -o secrets.out
 ```
 ```sh
-cat urls.txt | ./guhya -t 100 -a "MyScanner/1.0"
+cat urls.txt | guhya -t 100 -a "MyScanner/1.0"
 ```
 
 ```sh
-git show HEAD:config.json | ./guhya -d -l config.json
+git show HEAD:config.json | guhya -d -l config.json
 ```
 
 
@@ -168,8 +168,10 @@ git show HEAD:config.json | ./guhya -d -l config.json
 ## 🧪 Quick Tests
 
 ```sh
-echo "AKIAEXAMPLEKEY12345678" | ./guhya
-echo "password: supersecret123" | ./guhya -p "password\s*[:=]\s*[^\s]+"
+echo "AKIAEXAMPLEKEY12345678" | guhya
+```
+```sh
+echo "password: supersecret123" | guhya -p "password\s*[:=]\s*[^\s]+"
 ```
 
 
